@@ -1,13 +1,13 @@
-Project Idea - Pneumothorax Binary Classification task
+# Pneumothorax Binary Classification task
 
-###Context
+### Context
 A pneumothorax occurs when air leaks into the space between your lung and chest wall. 
 This air pushes on the outside of your lung and makes it collapse.  
 
 ##Implementation Details
 The Effiecient-Net B2 Base model is implemented for classification task.
 
-###Dataset
+### Dataset
 ```
 https://www.kaggle.com/datasets/volodymyrgavrysh/pneumothorax-binary-classification-task
 ```
