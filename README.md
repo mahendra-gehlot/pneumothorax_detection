@@ -18,8 +18,15 @@ Data Content - > Medical images of lungs done by radiologist during chest x-ray 
 ### Code
 Call following function to train-test Model.
 ```
-train(model, criterion, optimizer, num_of_epochs)
+args = dict()
+args['version'] = 'v0'
+args['model'] = model
+args['criterion'] = criterion
+args['optimizer'] = optimizer
+args['epochs'] = 20
+args['plotting'] = False
+args['perform_testing'] = True
 
-test(model, criterion)
+execute(**args)
 
 ```
