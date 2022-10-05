@@ -47,37 +47,6 @@ Val_Dataset = PneumothoraxImgDataset('data/processed/val_data.csv',
                                      'data/external/small_train_data_set')
 Train_Dataset = PneumothoraxImgDataset('data/processed/train_data.csv',
                                        'data/external/small_train_data_set')
-######################################################################################
-######################################################################################
-# checking device to train on
-device = "cuda" if torch.cuda.is_available() else "cpu"
-
-######################################################################################
-######################################################################################
-
-# NN Model
-
-
-class NeuralNetwork(nn.Module):
-    def __init__(self):
-        super(NeuralNetwork, self).__init__()
-        self.classes = 2
-        self.efficientnet = torch.hub.load(
-            'NVIDIA/DeepLearningExamples:torchhub',
-            'nvidia_efficientnet_b0',
-            pretrained=False)
-        self.efficientnet.stem.conv = nn.Conv2d(1,
-                                                32,
-                                                kernel_size=(3, 3),
-                                                stride=(2, 2),
-                                                padding=(1, 1),
-                                                bias=False)
-        self.efficientnet.classifier.fc = nn.Linear(1280,
-                                                    self.classes,
-                                                    bias=True)
-
-    def forward(self, x):
-        return self.efficientnet(x)
 
 
 def train(model, criterion, optimizer, num_of_epochs):
@@ -164,3 +133,37 @@ def train(model, criterion, optimizer, num_of_epochs):
         print(f'\nVal Loss: {val_loss:.4f} Val Acc.: {val_accuracy:.4f}\n')
 
     return model, train_acc, train_losses, val_losses, val_accuracies
+
+
+def test(model, criterion):
+    test_loader = DataLoader(Test_Dataset, batch_size=32)
+
+    model.eval()
+
+    running_loss = 0
+    running_accuracy = 0
+
+    print('-------Testing Model------------')
+    for idx, data in tqdm(enumerate(test_loader),
+                          total=len(test_loader),
+                          position=0,
+                          leave=True):
+        images, labels = data
+        images = images.to(device)
+
+        outputs = model(images)
+        labels = labels.type(torch.LongTensor).to(device)
+
+        loss = criterion(outputs, labels)
+
+        _, preds = torch.max(outputs, 1)
+
+        running_loss += loss.item() * images.size(0)
+        running_accuracy += torch.sum(preds == labels.data)
+
+    test_loss = running_loss / len(Test_Dataset)
+    test_accuracy = running_accuracy / len(Test_Dataset)
+
+    print(f'\nTest Loss: {test_loss:.5f} Test Acc.: {test_accuracy:.5f}\n')
+
+    return test_loss, test_accuracy
