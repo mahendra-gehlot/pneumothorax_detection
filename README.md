@@ -1,7 +1,7 @@
 # Pneumothorax Binary Classification task
 
 ### Project Tree
-------------
+```
 
     ├── LICENSE
     ├── README.md          <- The top-level README for developers using this project.
@@ -36,7 +36,7 @@
     │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
     │       └── visualize.py
 
-------------
+```
 
 ### Context
 A pneumothorax occurs when air leaks into the space between your lung and chest wall. 
