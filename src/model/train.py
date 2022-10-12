@@ -5,6 +5,7 @@ import pandas as pd
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import seaborn as sns
+from models import *
 
 from sklearn.model_selection import train_test_split
 
@@ -47,6 +48,8 @@ Val_Dataset = PneumothoraxImgDataset('data/processed/val_data.csv',
                                      'data/external/small_train_data_set')
 Train_Dataset = PneumothoraxImgDataset('data/processed/train_data.csv',
                                        'data/external/small_train_data_set')
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 def train(model, criterion, optimizer, num_of_epochs):

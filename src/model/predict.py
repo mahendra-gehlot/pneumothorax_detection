@@ -3,7 +3,7 @@ import seaborn as sns
 import torch
 from torch import nn
 from torch import optim
-from train_testing import train, test
+from train import train, test
 
 import logging
 # setting up logger
