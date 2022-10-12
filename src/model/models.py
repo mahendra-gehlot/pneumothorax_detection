@@ -3,9 +3,9 @@ from torch import nn
 from torch import optim
 
 
-class NeuralNetwork_B0(nn.Module):
+class NeuralNetworkB0(nn.Module):
     def __init__(self):
-        super(NeuralNetwork_B0, self).__init__()
+        super(NeuralNetworkB0, self).__init__()
         self.classes = 2
         self.efficientnet = torch.hub.load(
             'NVIDIA/DeepLearningExamples:torchhub',
@@ -29,9 +29,9 @@ class NeuralNetwork_B0(nn.Module):
 ############################################################################################
 
 
-class NeuralNetwork_B4(nn.Module):
+class NeuralNetworkB4(nn.Module):
     def __init__(self):
-        super(NeuralNetwork_B4, self).__init__()
+        super(NeuralNetworkB4, self).__init__()
         self.classes = 2
         self.efficientnet = torch.hub.load(
             'NVIDIA/DeepLearningExamples:torchhub',
