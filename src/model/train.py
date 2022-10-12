@@ -261,7 +261,8 @@ def execute(version,
 def run():
     parser = argparse.ArgumentParser(
         description='specify arguments of training')
-    parser.add_argument('model',
+    parser.add_argument('-m',
+                        '--model',
                         choices=['B0', 'B4'],
                         default='B0',
                         help='select models of efficient-net')
@@ -270,20 +271,18 @@ def run():
                         required=True,
                         type=str,
                         help='specify version e.g v0 v1 v2...')
-    parser.add_argument('epochs',
-                        required=True,
+    parser.add_argument('-e',
+                        '--epochs',
                         type=int,
                         default=20,
                         help='Number of epochs for training')
 
     parser.add_argument('save_model',
-                        required=True,
                         type=bool,
                         default=False,
                         help='saves trained model')
 
     parser.add_argument('make_plots',
-                        required=True,
                         type=bool,
                         default=False,
                         help='plots of losses and accuracy are stored')
@@ -300,8 +299,7 @@ def run():
     loss_criterion = nn.CrossEntropyLoss()
     model_optimizer = optim.Adam(current_model.parameters(), lr=0.001)
 
-    execute(args.version, loss_criterion, model_optimizer, args.epochs,
-            args.save_model, args.make_plots)
+    execute(args.version, current_model, loss_criterion, model_optimizer, args.epochs, args.save_model, args.make_plots)
 
     return None
 
