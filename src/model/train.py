@@ -306,5 +306,5 @@ def run():
     return None
 
 
-if __name__ == 'main':
+if __name__ == '__main__':
     run()
