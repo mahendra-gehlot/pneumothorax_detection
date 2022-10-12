@@ -98,7 +98,7 @@ def train(model, criterion, optimizer, num_of_epochs):
         train_loader = DataLoader(train_dataset, batch_size=64)
         val_loader = DataLoader(val_dataset, batch_size=32)
 
-        print('-----------Trainning in Progress --------------')
+        print('-----------Training in Progress --------------')
         for idx, data in tqdm(enumerate(train_loader),
                               total=len(train_loader),
                               position=0,
@@ -213,18 +213,18 @@ def plot_losses_acc(train_acc, train_loss, val_loss, val_acc):
     fig, axes = plt.subplots(1, 2, sharex=True, figsize=(15, 8))
 
     # plot 1
-    sns.lineplot(ax=axes[0], x=epoch_ids, y=train_acc)
-    sns.lineplot(ax=axes[0], x=epoch_ids, y=val_acc)
-    axes[0].set_title('Model Accuracy')
-    axes[0].legend(['Train Acc', 'Val Acc'])
+    sns.lineplot(ax=axes[0][0], x=epoch_ids, y=train_acc)
+    sns.lineplot(ax=axes[0][0], x=epoch_ids, y=val_acc)
+    axes[0][0].set_title('Model Accuracy')
+    axes[0][0].legend(['Train Acc', 'Val Acc'])
 
     # plot2
-    sns.lineplot(ax=axes[1], x=epoch_ids, y=train_loss)
-    sns.lineplot(ax=axes[1], x=epoch_ids, y=val_loss)
-    axes[1].set_title('Model Losses')
-    axes[1].legend(['Train Loss', 'Val Loss'])
+    sns.lineplot(ax=axes[0][1], x=epoch_ids, y=train_loss)
+    sns.lineplot(ax=axes[0][1], x=epoch_ids, y=val_loss)
+    axes[0][1].set_title('Model Losses')
+    axes[0][1].legend(['Train Loss', 'Val Loss'])
 
-    plt.show()
+    fig.savefig("reports/figures/acc_loss" + ".pdf", format='pdf')
 
     return None
 
@@ -248,8 +248,21 @@ def execute(version,
         )
 
     if plotting:
-        print(type(train_acc[0]))
-        plot_losses_acc(train_acc, train_loss, val_loss, val_acc)
+        def convert_to_cpu(gpu_data):
+            cpu_data = []
+            for unit in gpu_data:
+                if isinstance(unit, float):
+                    cpu_data.append(unit)
+                else:
+                    cpu_data.append(float(unit.cpu()))
+
+            return cpu_data
+
+        train_acc_cpu = convert_to_cpu(train_acc)
+        train_loss_cpu = convert_to_cpu(train_loss)
+        val_loss_cpu = convert_to_cpu(val_loss)
+        val_acc_cpu = convert_to_cpu(val_acc)
+        plot_losses_acc(train_acc_cpu, train_loss_cpu, val_loss_cpu, val_acc_cpu)
 
     if perform_testing:
         test_loss, test_acc = test(trained_model, criterion)
@@ -260,7 +273,7 @@ def execute(version,
 
 def run():
     parser = argparse.ArgumentParser(
-        description='specify arguments of training')
+        description='specify arguments for training')
     parser.add_argument('-m',
                         '--model',
                         choices=['B0', 'B4'],
@@ -290,16 +303,26 @@ def run():
     args = parser.parse_args()
 
     if args.model == 'B0':
+        logger.info(f'Model {args.model}')
         current_model = NeuralNetworkB0().to(device)
     elif args.model == 'B4':
+        logger.info(f'Model {args.model}')
         current_model = NeuralNetworkB4().to(device)
     else:
+        logger.info(f'Model {args.model}')
         current_model = NeuralNetworkB0().to(device)
 
     loss_criterion = nn.CrossEntropyLoss()
     model_optimizer = optim.Adam(current_model.parameters(), lr=0.001)
 
-    execute(args.version, current_model, loss_criterion, model_optimizer, args.epochs, args.save_model, args.make_plots)
+    execute(args.version,
+            current_model,
+            loss_criterion,
+            model_optimizer,
+            args.epochs,
+            save_model=args.save_model,
+            plotting=args.make_plots,
+            perform_testing=True)
 
     return None
 
