@@ -1,27 +1,13 @@
-import matplotlib.pyplot as plt
-import seaborn as sns
 import torch
-from torch import nn
-from torch import optim
-from train import train, test
+import os
 
-import logging
-# setting up logger
-logger = logging.getLogger('Model')
-logger.setLevel(logging.INFO)
-fh = logging.FileHandler('model_logs.log', mode="a")
-fh.setLevel(logging.INFO)
-logger.addHandler(fh)
-# console output off
-logger.propagate = False
+if os.path.isdir('model/infer_model.pt'):
+    model = torch.load('model/infer_model.pt')
+    model.eval()
+    image_path = 'to_be_added'
+    output = model(image_path)
+    print(output)
 
+else:
+    print('Load model first for inferences!')
 
-# args to model
-args = dict()
-args['version'] = 'v0'
-args['model'] = model
-args['criterion'] = criterion
-args['optimizer'] = optimizer
-args['epochs'] = 20
-args['plotting'] = False
-args['perform_testing'] = True

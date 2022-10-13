@@ -213,16 +213,16 @@ def plot_losses_acc(version, train_acc, train_loss, val_loss, val_acc):
     fig, axes = plt.subplots(1, 2, sharex=True, figsize=(15, 8))
 
     # plot 1
-    sns.lineplot(ax=axes[0][0], x=epoch_ids, y=train_acc)
-    sns.lineplot(ax=axes[0][0], x=epoch_ids, y=val_acc)
-    axes[0][0].set_title('Model Accuracy')
-    axes[0][0].legend(['Train Acc', 'Val Acc'])
+    sns.lineplot(ax=axes[0], x=epoch_ids, y=train_acc)
+    sns.lineplot(ax=axes[0], x=epoch_ids, y=val_acc)
+    axes[0].set_title('Model Accuracy')
+    axes[0].legend(['Train Acc', 'Val Acc'])
 
     # plot2
-    sns.lineplot(ax=axes[0][1], x=epoch_ids, y=train_loss)
-    sns.lineplot(ax=axes[0][1], x=epoch_ids, y=val_loss)
-    axes[0][1].set_title('Model Losses')
-    axes[0][1].legend(['Train Loss', 'Val Loss'])
+    sns.lineplot(ax=axes[1], x=epoch_ids, y=train_loss)
+    sns.lineplot(ax=axes[1], x=epoch_ids, y=val_loss)
+    axes[1].set_title('Model Losses')
+    axes[1].legend(['Train Loss', 'Val Loss'])
 
     fig.savefig(f"reports/figures/{version}_acc_loss" + ".png", format='png')
 
@@ -240,6 +240,9 @@ def execute(version,
     logger.info(f'Version: {version}\n')
     trained_model, train_acc, train_loss, val_loss, val_acc = train(
         model, criterion, optimizer, num_of_epochs=epochs)
+
+    if save_model:
+        torch.save(trained_model, f'model/infer_model.pt')
 
     logger.info('Epoch   Training Accuracy  Validation Accuracy')
     for idx in range(len(train_acc)):
@@ -311,7 +314,9 @@ def run():
     else:
         logger.info(f'Model {args.model}')
         current_model = NeuralNetworkB0().to(device)
-    weights = torch.tensor([(1597/2027), (430/2027)])
+
+    # adding weights to handle class imbalance
+    weights = torch.tensor([(1597/2027), (430/2027)]).to(device)
     loss_criterion = nn.CrossEntropyLoss(weight=weights)
     model_optimizer = optim.Adam(current_model.parameters(), lr=0.001)
 
