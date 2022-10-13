@@ -199,7 +199,7 @@ def test(model, criterion):
     return test_loss, test_accuracy
 
 
-def plot_losses_acc(train_acc, train_loss, val_loss, val_acc):
+def plot_losses_acc(version, train_acc, train_loss, val_loss, val_acc):
     """plotting accuracies and losses in iterations"""
 
     sns.set_theme()
@@ -224,7 +224,7 @@ def plot_losses_acc(train_acc, train_loss, val_loss, val_acc):
     axes[0][1].set_title('Model Losses')
     axes[0][1].legend(['Train Loss', 'Val Loss'])
 
-    fig.savefig("reports/figures/acc_loss" + ".pdf", format='pdf')
+    fig.savefig(f"reports/figures/{version}_acc_loss" + ".png", format='png')
 
     return None
 
@@ -262,7 +262,7 @@ def execute(version,
         train_loss_cpu = convert_to_cpu(train_loss)
         val_loss_cpu = convert_to_cpu(val_loss)
         val_acc_cpu = convert_to_cpu(val_acc)
-        plot_losses_acc(train_acc_cpu, train_loss_cpu, val_loss_cpu, val_acc_cpu)
+        plot_losses_acc(version, train_acc_cpu, train_loss_cpu, val_loss_cpu, val_acc_cpu)
 
     if perform_testing:
         test_loss, test_acc = test(trained_model, criterion)
@@ -311,8 +311,8 @@ def run():
     else:
         logger.info(f'Model {args.model}')
         current_model = NeuralNetworkB0().to(device)
-
-    loss_criterion = nn.CrossEntropyLoss()
+    weights = torch.tensor([(1597/2027), (430/2027)])
+    loss_criterion = nn.CrossEntropyLoss(weight=weights)
     model_optimizer = optim.Adam(current_model.parameters(), lr=0.001)
 
     execute(args.version,
