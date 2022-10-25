@@ -95,7 +95,7 @@ def train(model, criterion, optimizer, num_of_epochs):
 
         train_dataset, val_dataset = Train_Dataset, Test_Dataset
 
-        train_loader = DataLoader(train_dataset, batch_size=48)
+        train_loader = DataLoader(train_dataset, batch_size=41)
         val_loader = DataLoader(val_dataset, batch_size=32)
 
         print('-----------Training in Progress --------------')
@@ -270,6 +270,9 @@ def execute(version,
     if perform_testing:
         test_loss, test_acc = test(trained_model, criterion)
         logger.info(f'Testing Accuracy {test_acc:.5f}')
+
+    if save_model:
+        pass
 
     return None
 
