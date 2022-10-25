@@ -52,4 +52,4 @@ class NeuralNetworkB4(nn.Module):
 
     def forward(self, x):
         results = self.efficientnet(x)
-        return self.drop_out(results)
+        return results
