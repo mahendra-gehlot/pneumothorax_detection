@@ -20,9 +20,11 @@ class NeuralNetworkB0(nn.Module):
         self.efficientnet.classifier.fc = nn.Linear(1280,
                                                     self.classes,
                                                     bias=True)
+        self.drop_out = nn.Dropout(0.25)
 
     def forward(self, x):
-        return self.efficientnet(x)
+        results = self.efficientnet(x)
+        return self.drop_out(results)
 
 
 ############################################################################################
