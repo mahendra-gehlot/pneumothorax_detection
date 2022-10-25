@@ -45,7 +45,7 @@ class PneumothoraxImgDataset(Dataset):
         img_dir : str
             directory of images
     """
-    def __init__(self, annotations_file, img_dir, dim=256):
+    def __init__(self, annotations_file, img_dir, dim=192):
         self.img_labels = pd.read_csv(annotations_file)
         self.img_dir = img_dir
         self.transform = transforms.Compose([
@@ -95,7 +95,7 @@ def train(model, criterion, optimizer, num_of_epochs):
 
         train_dataset, val_dataset = Train_Dataset, Test_Dataset
 
-        train_loader = DataLoader(train_dataset, batch_size=32)
+        train_loader = DataLoader(train_dataset, batch_size=48)
         val_loader = DataLoader(val_dataset, batch_size=32)
 
         print('-----------Training in Progress --------------')
@@ -270,9 +270,6 @@ def execute(version,
     if perform_testing:
         test_loss, test_acc = test(trained_model, criterion)
         logger.info(f'Testing Accuracy {test_acc:.5f}')
-
-    if save_model:
-        pass
 
     return None
 
