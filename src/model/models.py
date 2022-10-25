@@ -10,7 +10,7 @@ class NeuralNetworkB0(nn.Module):
         self.efficientnet = torch.hub.load(
             'NVIDIA/DeepLearningExamples:torchhub',
             'nvidia_efficientnet_b0',
-            pretrained=False)
+            pretrained=True)
         self.efficientnet.stem.conv = nn.Conv2d(1,
                                                 32,
                                                 kernel_size=(3, 3),
@@ -38,7 +38,7 @@ class NeuralNetworkB4(nn.Module):
         self.efficientnet = torch.hub.load(
             'NVIDIA/DeepLearningExamples:torchhub',
             'nvidia_efficientnet_b4',
-            pretrained=False)
+            pretrained=True)
         self.efficientnet.stem.conv = nn.Conv2d(1,
                                                 48,
                                                 kernel_size=(3, 3),
