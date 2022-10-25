@@ -95,7 +95,7 @@ def train(model, criterion, optimizer, num_of_epochs):
 
         train_dataset, val_dataset = Train_Dataset, Test_Dataset
 
-        train_loader = DataLoader(train_dataset, batch_size=64)
+        train_loader = DataLoader(train_dataset, batch_size=48)
         val_loader = DataLoader(val_dataset, batch_size=32)
 
         print('-----------Training in Progress --------------')
