@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 TEST_SIZE = .20  # defining portion of data to be part of testing
-VAL_SIZE = 0.10  # defining portion of training data to be part of validation
+VAL_SIZE = 0.18  # defining portion of training data to be part of validation
 
 # train_data_m contain all the images name and target_labels_ids
 raw_data = pd.read_csv('data/external/train_data_m.csv')
@@ -30,7 +30,7 @@ train_val_labels = train_val_df[1]
 X_train, X_val, y_train, y_val = train_test_split(files_names,
                                                   train_val_labels,
                                                   test_size=VAL_SIZE,
-                                                  random_state=336)
+                                                  random_state=122)
 
 # training data
 train_df = pd.concat([pd.Series(X_train), pd.Series(y_train)], axis=1)

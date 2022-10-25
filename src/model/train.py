@@ -316,7 +316,7 @@ def run():
         current_model = NeuralNetworkB0().to(device)
 
     # adding weights to handle class imbalance
-    weights = torch.tensor([(1597/2027), (430/2027)]).to(device)
+    weights = torch.tensor([(430./2027.), (1597./2027.)]).to(device)
     loss_criterion = nn.CrossEntropyLoss(weight=weights)
     model_optimizer = optim.Adam(current_model.parameters(), lr=0.001)
 
