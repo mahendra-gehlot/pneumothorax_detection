@@ -191,9 +191,8 @@ def test(model, criterion):
         running_loss += loss.item() * images.size(0)
         running_accuracy += torch.sum(preds == labels.data)
 
-        for i in range(len(outputs)):
-            predicts.append(outputs[i].cpu())
-            labels_all.append(labels[i].cpu())
+        predicts.extend(preds.cpu())
+        labels_all.extend(labels.cpu())
 
     test_loss = running_loss / len(Test_Dataset)
     test_accuracy = running_accuracy / len(Test_Dataset)
