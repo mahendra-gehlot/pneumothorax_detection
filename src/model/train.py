@@ -184,27 +184,23 @@ def test(model, criterion):
                           leave=True):
         images, labels = data
         images = images.to(device)
-
         outputs = model(images)
         labels = labels.type(torch.LongTensor).to(device)
-
-        for i in range(len(outputs)):
-            predicts.append(outputs[i])
-            labels_all.append(labels[i])
-
         loss = criterion(outputs, labels)
-
         _, preds = torch.max(outputs, 1)
-
         running_loss += loss.item() * images.size(0)
         running_accuracy += torch.sum(preds == labels.data)
+
+        for i in range(len(outputs)):
+            predicts.append(outputs[i].detach())
+            labels_all.append(labels[i].detach())
 
     test_loss = running_loss / len(Test_Dataset)
     test_accuracy = running_accuracy / len(Test_Dataset)
 
     print(f'\nTest Loss: {test_loss:.5f} Test Acc.: {test_accuracy:.5f}\n')
 
-    reports = classification_report(labels_all, predicts)
+    reports = classification_report(np.array(labels_all), np.array(predicts))
 
     print(f'Classification report: \n {reports}')
 
