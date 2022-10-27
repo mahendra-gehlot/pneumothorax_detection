@@ -166,12 +166,16 @@ def train(model, criterion, optimizer, num_of_epochs):
 
 
 def test(model, criterion):
+    from sklearn.metrics import classification_report
     test_loader = DataLoader(Test_Dataset, batch_size=32)
 
     model.eval()
 
     running_loss = 0
     running_accuracy = 0
+
+    predicts = []
+    labels_all = []
 
     print('-------Testing Model------------')
     for idx, data in tqdm(enumerate(test_loader),
@@ -183,6 +187,10 @@ def test(model, criterion):
 
         outputs = model(images)
         labels = labels.type(torch.LongTensor).to(device)
+
+        for i in range(len(outputs)):
+            predicts.append(outputs[i])
+            labels_all.append(labels[i])
 
         loss = criterion(outputs, labels)
 
@@ -196,7 +204,11 @@ def test(model, criterion):
 
     print(f'\nTest Loss: {test_loss:.5f} Test Acc.: {test_accuracy:.5f}\n')
 
-    return test_loss, test_accuracy
+    reports = classification_report(labels_all, predicts)
+
+    print(f'Classification report: \n {reports}')
+
+    return test_loss, test_accuracy, reports
 
 
 def plot_losses_acc(version, train_acc, train_loss, val_loss, val_acc):
@@ -268,8 +280,9 @@ def execute(version,
         plot_losses_acc(version, train_acc_cpu, train_loss_cpu, val_loss_cpu, val_acc_cpu)
 
     if perform_testing:
-        test_loss, test_acc = test(trained_model, criterion)
+        test_loss, test_acc, reports = test(trained_model, criterion)
         logger.info(f'Testing Accuracy {test_acc:.5f}')
+        logger.info(f'Report: {reports}')
 
     return None
 
