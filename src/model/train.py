@@ -109,14 +109,13 @@ def train(model, criterion, optimizer, num_of_epochs):
             outputs = model(images)
             labels = labels.type(torch.float32).to(device)
             pro_predict = torch.reshape(outputs, (-1,))
+            # setting weights for class imbalance
             weights = torch.tensor([0.2 if x else 0.8 for x in labels]).to(device)
             criterion.weight = weights
             loss = criterion.forward(pro_predict, labels)
             loss.backward()
             optimizer.step()
-            ss = nn.Sigmoid()
-            pro_predict = ss(pro_predict)
-            pro_predict = pro_predict > 0.5
+            pro_predict = pro_predict > 0.0
             running_loss += loss.item() * images.size(0)
             running_accuracy += torch.sum(pro_predict == labels.data)
 
@@ -148,10 +147,10 @@ def train(model, criterion, optimizer, num_of_epochs):
             labels = labels.type(torch.float32).to(device)
 
             pro_predict = torch.reshape(outputs, (-1,))
-            loss = criterion(pro_predict, labels)
-            ss = nn.Sigmoid()
-            pro_predict = ss(pro_predict)
-            pro_predict = pro_predict > 0.5
+            weights = torch.tensor([0.2 if x else 0.8 for x in labels]).to(device)
+            criterion.weight = weights
+            loss = criterion.forward(pro_predict, labels)
+            pro_predict = pro_predict > 0.0
             running_loss += loss.item() * images.size(0)
             running_accuracy += torch.sum(pro_predict == labels.data)
 
@@ -188,11 +187,10 @@ def test(model, criterion):
         outputs = model(images)
         labels = labels.type(torch.float32).to(device)
         pro_predict = torch.reshape(outputs, (-1,))
-        loss = criterion(pro_predict, labels)
-
-        ss = nn.Sigmoid()
-        pro_predict = ss(pro_predict)
-        pro_predict = pro_predict > 0.5
+        weights = torch.tensor([0.2 if x else 0.8 for x in labels]).to(device)
+        criterion.weight = weights
+        loss = criterion.forward(pro_predict, labels)
+        pro_predict = pro_predict > 0.0
         running_loss += loss.item() * images.size(0)
         running_accuracy += torch.sum(pro_predict == labels.data)
 

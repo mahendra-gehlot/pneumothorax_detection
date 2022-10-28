@@ -19,9 +19,9 @@ class NeuralNetworkB0(nn.Module):
         self.efficientnet.classifier.fc = nn.Linear(1280,
                                                     1,
                                                     bias=True)
-        for params in self.efficientnet.params():
+        for params in self.efficientnet.parameters():
             params.requires_grad = True
-            
+
         self.drop_out = nn.Dropout(0.25)
 
     def forward(self, x):
@@ -48,7 +48,7 @@ class NeuralNetworkB4(nn.Module):
         self.efficientnet.classifier.fc = nn.Linear(1792,
                                                     1,
                                                     bias=True)
-        for params in self.efficientnet.params():
+        for params in self.efficientnet.parameters():
             params.requires_grad = True
         self.drop_out = nn.Dropout(0.25)
 
