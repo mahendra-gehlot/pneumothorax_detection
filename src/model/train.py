@@ -113,6 +113,8 @@ def train(model, criterion, optimizer, num_of_epochs):
             _, preds = torch.max(outputs, 1)
 
             loss = criterion(outputs, labels)
+
+            break
             loss.backward()
 
             optimizer.step()
