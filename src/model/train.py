@@ -107,12 +107,15 @@ def train(model, criterion, optimizer, num_of_epochs):
             images = images.type(torch.float32).to(device)
             optimizer.zero_grad()
             outputs = model(images)
-            sigmoid = nn.Sigmoid()
             labels = labels.type(torch.float32).to(device)
-            pro_predict = sigmoid(torch.reshape(outputs, (-1,)))
-            loss = criterion(pro_predict, labels)
+            pro_predict = torch.reshape(outputs, (-1,))
+            weights = torch.tensor([0.2 if x else 0.8 for x in labels]).to(device)
+            criterion.weight = weights
+            loss = criterion.forward(pro_predict, labels)
             loss.backward()
             optimizer.step()
+            ss = nn.Sigmoid()
+            pro_predict = ss(pro_predict)
             pro_predict = pro_predict > 0.5
             running_loss += loss.item() * images.size(0)
             running_accuracy += torch.sum(pro_predict == labels.data)
@@ -142,12 +145,12 @@ def train(model, criterion, optimizer, num_of_epochs):
             images = images.type(torch.float32).to(device)
 
             outputs = model(images)
-            sigmoid = nn.Sigmoid()
             labels = labels.type(torch.float32).to(device)
 
-            pro_predict = sigmoid(torch.reshape(outputs, (-1,)))
+            pro_predict = torch.reshape(outputs, (-1,))
             loss = criterion(pro_predict, labels)
-
+            ss = nn.Sigmoid()
+            pro_predict = ss(pro_predict)
             pro_predict = pro_predict > 0.5
             running_loss += loss.item() * images.size(0)
             running_accuracy += torch.sum(pro_predict == labels.data)
@@ -182,12 +185,13 @@ def test(model, criterion):
                           leave=True):
         images, labels = data
         images = images.to(device)
-        sigmoid = nn.Sigmoid()
         outputs = model(images)
         labels = labels.type(torch.float32).to(device)
-        pro_predict = sigmoid(torch.reshape(outputs, (-1,)))
+        pro_predict = torch.reshape(outputs, (-1,))
         loss = criterion(pro_predict, labels)
 
+        ss = nn.Sigmoid()
+        pro_predict = ss(pro_predict)
         pro_predict = pro_predict > 0.5
         running_loss += loss.item() * images.size(0)
         running_accuracy += torch.sum(pro_predict == labels.data)
@@ -326,8 +330,8 @@ def run():
 
     # adding weights to handle class imbalance
     weights = torch.tensor([(1597./2027.), (430./2027.)]).to(device)
-    loss_criterion = nn.BCELoss()
-    model_optimizer = optim.Adam(current_model.parameters(), lr=0.001)
+    loss_criterion = nn.BCEWithLogitsLoss()
+    model_optimizer = optim.Adam(current_model.parameters(), lr=0.0001)
 
     execute(args.version,
             current_model,
