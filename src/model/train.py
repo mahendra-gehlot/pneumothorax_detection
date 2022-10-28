@@ -327,7 +327,7 @@ def run():
 
     # adding weights to handle class imbalance
     weights = torch.tensor([(1597./2027.), (430./2027.)]).to(device)
-    loss_criterion = nn.CrossEntropyLoss(weight=weights)
+    loss_criterion = nn.BCELoss(weight=weights)
     model_optimizer = optim.Adam(current_model.parameters(), lr=0.001)
 
     execute(args.version,
