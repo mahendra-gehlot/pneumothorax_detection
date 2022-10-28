@@ -106,21 +106,15 @@ def train(model, criterion, optimizer, num_of_epochs):
             images, labels = data
             images = images.type(torch.float32).to(device)
             optimizer.zero_grad()
-
             outputs = model(images)
-            labels = labels.type(torch.LongTensor).to(device)
-
-            _, preds = torch.max(outputs, 1)
-
-            loss = criterion(outputs, labels)
-
-            break
+            sigmoid = nn.Sigmoid()
+            labels = labels.type(torch.float32).to(device)
+            pro_predict = sigmoid(torch.reshape(outputs, (-1,)))
+            loss = criterion(pro_predict, labels)
             loss.backward()
-
             optimizer.step()
-
             running_loss += loss.item() * images.size(0)
-            running_accuracy += torch.sum(preds == labels.data)
+            running_accuracy += torch.sum(pro_predict == labels.data)
 
         epoch_loss = running_loss / len(train_dataset)
         epoch_accuracy = running_accuracy / len(train_dataset)
@@ -147,14 +141,14 @@ def train(model, criterion, optimizer, num_of_epochs):
             images = images.type(torch.float32).to(device)
 
             outputs = model(images)
-            labels = labels.type(torch.LongTensor).to(device)
+            sigmoid = nn.Sigmoid()
+            labels = labels.type(torch.float32).to(device)
 
-            loss = criterion(outputs, labels)
-
-            _, preds = torch.max(outputs, 1)
+            pro_predict = sigmoid(torch.reshape(outputs, (-1,)))
+            loss = criterion(pro_predict, labels)
 
             running_loss += loss.item() * images.size(0)
-            running_accuracy += torch.sum(preds == labels.data)
+            running_accuracy += torch.sum(pro_predict == labels.data)
 
         val_loss = running_loss / len(val_dataset)
         val_accuracy = running_accuracy / len(val_dataset)
@@ -163,6 +157,8 @@ def train(model, criterion, optimizer, num_of_epochs):
         val_accuracies.append(val_accuracy)
 
         print(f'\nVal Loss: {val_loss:.4f} Val Acc.: {val_accuracy:.4f}\n')
+
+        return
 
     return model, train_acc, train_losses, val_losses, val_accuracies
 
@@ -186,14 +182,16 @@ def test(model, criterion):
                           leave=True):
         images, labels = data
         images = images.to(device)
+        sigmoid = nn.Sigmoid()
         outputs = model(images)
-        labels = labels.type(torch.LongTensor).to(device)
-        loss = criterion(outputs, labels)
-        _, preds = torch.max(outputs, 1)
-        running_loss += loss.item() * images.size(0)
-        running_accuracy += torch.sum(preds == labels.data)
+        labels = labels.type(torch.float32).to(device)
+        pro_predict = sigmoid(torch.reshape(outputs, (-1,)))
+        loss = criterion(pro_predict, labels)
 
-        predicts.extend(preds.cpu())
+        running_loss += loss.item() * images.size(0)
+        running_accuracy += torch.sum(pro_predict == labels.data)
+
+        predicts.extend(pro_predict.cpu())
         labels_all.extend(labels.cpu())
 
     test_loss = running_loss / len(Test_Dataset)
@@ -327,7 +325,7 @@ def run():
 
     # adding weights to handle class imbalance
     weights = torch.tensor([(1597./2027.), (430./2027.)]).to(device)
-    loss_criterion = nn.BCELoss(weight=weights)
+    loss_criterion = nn.BCELoss()
     model_optimizer = optim.Adam(current_model.parameters(), lr=0.001)
 
     execute(args.version,

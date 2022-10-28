@@ -6,7 +6,6 @@ from torch import optim
 class NeuralNetworkB0(nn.Module):
     def __init__(self):
         super(NeuralNetworkB0, self).__init__()
-        self.classes = 1
         self.efficientnet = torch.hub.load(
             'NVIDIA/DeepLearningExamples:torchhub',
             'nvidia_efficientnet_b0',
@@ -18,7 +17,7 @@ class NeuralNetworkB0(nn.Module):
                                                 padding=(1, 1),
                                                 bias=False)
         self.efficientnet.classifier.fc = nn.Linear(1280,
-                                                    self.classes,
+                                                    1,
                                                     bias=True)
         self.drop_out = nn.Dropout(0.25)
 
@@ -33,7 +32,6 @@ class NeuralNetworkB0(nn.Module):
 class NeuralNetworkB4(nn.Module):
     def __init__(self):
         super(NeuralNetworkB4, self).__init__()
-        self.classes = 1
         self.efficientnet = torch.hub.load(
             'NVIDIA/DeepLearningExamples:torchhub',
             'nvidia_efficientnet_b4',
@@ -45,7 +43,7 @@ class NeuralNetworkB4(nn.Module):
                                                 padding=(1, 1),
                                                 bias=False)
         self.efficientnet.classifier.fc = nn.Linear(1792,
-                                                    self.classes,
+                                                    1,
                                                     bias=True)
         self.drop_out = nn.Dropout(0.25)
 
