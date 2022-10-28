@@ -113,6 +113,7 @@ def train(model, criterion, optimizer, num_of_epochs):
             loss = criterion(pro_predict, labels)
             loss.backward()
             optimizer.step()
+            pro_predict = pro_predict > 0.5
             running_loss += loss.item() * images.size(0)
             running_accuracy += torch.sum(pro_predict == labels.data)
 
@@ -147,6 +148,7 @@ def train(model, criterion, optimizer, num_of_epochs):
             pro_predict = sigmoid(torch.reshape(outputs, (-1,)))
             loss = criterion(pro_predict, labels)
 
+            pro_predict = pro_predict > 0.5
             running_loss += loss.item() * images.size(0)
             running_accuracy += torch.sum(pro_predict == labels.data)
 
@@ -157,8 +159,6 @@ def train(model, criterion, optimizer, num_of_epochs):
         val_accuracies.append(val_accuracy)
 
         print(f'\nVal Loss: {val_loss:.4f} Val Acc.: {val_accuracy:.4f}\n')
-
-        return
 
     return model, train_acc, train_losses, val_losses, val_accuracies
 
@@ -188,6 +188,7 @@ def test(model, criterion):
         pro_predict = sigmoid(torch.reshape(outputs, (-1,)))
         loss = criterion(pro_predict, labels)
 
+        pro_predict = pro_predict > 0.5
         running_loss += loss.item() * images.size(0)
         running_accuracy += torch.sum(pro_predict == labels.data)
 
