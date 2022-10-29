@@ -1,5 +1,4 @@
 import os
-import copy
 import numpy as np
 import argparse
 import pandas as pd
@@ -8,12 +7,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from models import *
 
-from sklearn.model_selection import train_test_split
-
 import torch
 from torch import nn
 from torch import optim
-from torch.nn import functional as F
 from torch.utils.data import Dataset, DataLoader
 from torchvision import datasets, transforms
 from torchvision.transforms import ToTensor
@@ -80,16 +76,21 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 def train(model, criterion, optimizer, num_of_epochs):
+    # holder of accuracy and losses over all epochs
     train_losses = []
     train_acc = []
     val_losses = []
     val_accuracies = []
 
+    # training in epochs
     for _, epoch in tqdm(enumerate(range(num_of_epochs))):
+
         print(f'\nEpoch {epoch + 1}/{num_of_epochs}')
 
+        # set model in training mode
         model.train()
 
+        # initialization of losses and accuracies
         running_loss = 0.
         running_accuracy = 0.
 
@@ -98,27 +99,45 @@ def train(model, criterion, optimizer, num_of_epochs):
         train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
         val_loader = DataLoader(val_dataset, batch_size=32, shuffle=True)
 
+        # batch wise training
         print('-----------Training in Progress --------------')
         for idx, data in tqdm(enumerate(train_loader),
                               total=len(train_loader),
                               position=0,
                               leave=True):
             images, labels = data
+            # converting image in tensor and sending it to device
             images = images.type(torch.float32).to(device)
+
+            # optimizer setting at gradient zero
             optimizer.zero_grad()
+
+            # forward to model
             outputs = model(images)
+
+            # labels converted to tensor and sent to device
             labels = labels.type(torch.float32).to(device)
+
+            # reshaping for loss calculations
             pro_predict = torch.reshape(outputs, (-1,))
-            # setting weights for class imbalance
+
+            # setting weights for class imbalance (0.8 for minority class and 0.2 for majority class,
+            # based on number of samples in dataset
             weights = torch.tensor([0.2 if x else 0.8 for x in labels]).to(device)
             criterion.weight = weights
             loss = criterion.forward(pro_predict, labels)
-            loss.backward()
-            optimizer.step()
-            pro_predict = pro_predict > 0.0
-            running_loss += loss.item() * images.size(0)
-            running_accuracy += torch.sum(pro_predict == labels.data)
 
+            # backpropagation of loss
+            loss.backward()
+
+            # optimizer step
+            optimizer.step()
+
+            # loss and accuracy calculations
+            running_loss += loss.item() * images.size(0)
+            running_accuracy += torch.sum((pro_predict > 0.0) == labels.data)
+
+        # epoch avg loss and accuracy
         epoch_loss = running_loss / len(train_dataset)
         epoch_accuracy = running_accuracy / len(train_dataset)
 
@@ -150,9 +169,8 @@ def train(model, criterion, optimizer, num_of_epochs):
             weights = torch.tensor([0.2 if x else 0.8 for x in labels]).to(device)
             criterion.weight = weights
             loss = criterion.forward(pro_predict, labels)
-            pro_predict = pro_predict > 0.0
             running_loss += loss.item() * images.size(0)
-            running_accuracy += torch.sum(pro_predict == labels.data)
+            running_accuracy += torch.sum((pro_predict > 0.0) == labels.data)
 
         val_loss = running_loss / len(val_dataset)
         val_accuracy = running_accuracy / len(val_dataset)
@@ -190,9 +208,8 @@ def test(model, criterion):
         weights = torch.tensor([0.2 if x else 0.8 for x in labels]).to(device)
         criterion.weight = weights
         loss = criterion.forward(pro_predict, labels)
-        pro_predict = pro_predict > 0.0
         running_loss += loss.item() * images.size(0)
-        running_accuracy += torch.sum(pro_predict == labels.data)
+        running_accuracy += torch.sum((pro_predict > 0.0) == labels.data)
 
         predicts.extend(pro_predict.cpu())
         labels_all.extend(labels.cpu())

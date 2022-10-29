@@ -30,7 +30,7 @@ train_val_labels = train_val_df[1]
 X_train, X_val, y_train, y_val = train_test_split(files_names,
                                                   train_val_labels,
                                                   test_size=VAL_SIZE,
-                                                  random_state=122)
+                                                  random_state=66)
 
 # training data
 train_df = pd.concat([pd.Series(X_train), pd.Series(y_train)], axis=1)
