@@ -52,14 +52,13 @@ class NeuralNetworkB4(nn.Module):
                                                 padding=(1, 1),
                                                 bias=False)
         # adding classifier layer
-        self.efficientnet.classifier.fc = nn.Linear(1792,
-                                                    1,
-                                                    bias=True)
+        self.efficientnet.classifier.fc = nn.Sequential(nn.Linear(1000, 560, bias=True),
+                                                        nn.ReLU(),
+                                                        nn.Dropout(0.25),
+                                                        nn.Linear(560, 1, bias=True))
         # settings model for training
         for params in self.efficientnet.parameters():
             params.requires_grad = True
-        # adding drop-out to avoid over fitting
-        self.drop_out = nn.Dropout(0.40)
 
     def forward(self, x):
-        return self.drop_out(self.efficientnet(x))
+        return self.efficientnet(x)

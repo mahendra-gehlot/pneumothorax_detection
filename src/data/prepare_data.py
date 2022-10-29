@@ -1,8 +1,8 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-TEST_SIZE = .20  # defining portion of data to be part of testing
-VAL_SIZE = 0.18  # defining portion of training data to be part of validation
+TEST_SIZE = .10  # defining portion of data to be part of testing
+VAL_SIZE = 0.10  # defining portion of training data to be part of validation
 
 # train_data_m contain all the images name and target_labels_ids
 raw_data = pd.read_csv('data/external/train_data_m.csv')
