@@ -41,7 +41,7 @@ class PneumothoraxImgDataset(Dataset):
         img_dir : str
             directory of images
     """
-    def __init__(self, annotations_file, img_dir, dim=192):
+    def __init__(self, annotations_file, img_dir, dim=380):
         self.img_labels = pd.read_csv(annotations_file)
         self.img_dir = img_dir
         self.transform = transforms.Compose([
@@ -94,10 +94,10 @@ def train(model, criterion, optimizer, num_of_epochs):
         running_loss = 0.
         running_accuracy = 0.
 
-        train_dataset, val_dataset = Train_Dataset, Test_Dataset
+        train_dataset, val_dataset = Train_Dataset, Val_Dataset
 
         train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
-        val_loader = DataLoader(val_dataset, batch_size=32, shuffle=True)
+        val_loader = DataLoader(val_dataset, batch_size=16, shuffle=True)
 
         # batch wise training
         print('-----------Training in Progress --------------')
@@ -184,8 +184,9 @@ def train(model, criterion, optimizer, num_of_epochs):
 
 
 def test(model, criterion):
+
     from sklearn.metrics import classification_report
-    test_loader = DataLoader(Test_Dataset, batch_size=32)
+    test_loader = DataLoader(Test_Dataset, batch_size=16)
 
     model.eval()
 

@@ -22,15 +22,10 @@ class NeuralNetworkB0(nn.Module):
         self.efficientnet.classifier.fc = nn.Linear(1280,
                                                     1,
                                                     bias=True)
-        # settings model for training
-        for params in self.efficientnet.parameters():
-            params.requires_grad = True
 
-        # drop out
-        self.drop_out = nn.Dropout(0.40)
 
     def forward(self, x):
-        return self.drop_out(self.efficientnet(x))
+        return self.efficientnet(x)
 
 
 ############################################################################################
@@ -52,13 +47,18 @@ class NeuralNetworkB4(nn.Module):
                                                 padding=(1, 1),
                                                 bias=False)
         # adding classifier layer
-        self.efficientnet.classifier.fc = nn.Sequential(nn.Linear(1000, 560, bias=True),
-                                                        nn.ReLU(),
-                                                        nn.Dropout(0.25),
-                                                        nn.Linear(560, 1, bias=True))
-        # settings model for training
-        for params in self.efficientnet.parameters():
-            params.requires_grad = True
+        self.efficientnet.classifier.fc = nn.Linear(1792, 1, bias=True)
+
+        # settings model for training parameters
+        # efficient_net has four block {stem layers features classifier}
+        for param in self.efficientnet.stem.parameters():
+            param.requires_grad_(False)
+        for param in self.efficientnet.layers.parameters():
+            param.requires_grad_(False)
+        for param in self.efficientnet.classifier.parameters():
+            param.requires_grad_(True)
+        for param in self.efficientnet.features.parameters():
+            param.requires_grad_(True)
 
     def forward(self, x):
         return self.efficientnet(x)
