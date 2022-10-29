@@ -59,6 +59,7 @@ class PneumothoraxImgDataset(Dataset):
         label = self.img_labels.iloc[idx, 1]
         if self.transform:
             image = self.transform(image)
+            image = image * torch.tensor([255.0])
 
         return image, label
 
