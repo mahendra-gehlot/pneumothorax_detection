@@ -275,7 +275,7 @@ def execute(version,
         model, criterion, optimizer, schedular, num_of_epochs=epochs)
 
     if save_model:
-        torch.save(trained_model, f'model/infer_model.pt')
+        torch.save(trained_model.state_dict(), f'model/infer_model.pt')
 
     logger.info('Epoch   Training Accuracy  Validation Accuracy')
     for idx in range(len(train_acc)):
