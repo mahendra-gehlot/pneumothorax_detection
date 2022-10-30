@@ -119,11 +119,12 @@ def train(model, criterion, optimizer, schedular, num_of_epochs):
             labels = labels.type(torch.float32).to(device)
 
             # reshaping for loss calculations
-            pro_predict = torch.reshape(outputs, (-1,))
+            pro_predict = torch.reshape(outputs, (-1, ))
 
             # setting weights for class imbalance (0.8 for minority class and 0.2 for majority class,
             # based on number of samples in dataset
-            weights = torch.tensor([0.2 if x else 0.8 for x in labels]).to(device)
+            weights = torch.tensor([0.2 if x else 0.8
+                                    for x in labels]).to(device)
             criterion.weight = weights
             loss = criterion.forward(pro_predict, labels)
 
@@ -167,8 +168,9 @@ def train(model, criterion, optimizer, schedular, num_of_epochs):
             outputs = model(images)
             labels = labels.type(torch.float32).to(device)
 
-            pro_predict = torch.reshape(outputs, (-1,))
-            weights = torch.tensor([0.2 if x else 0.8 for x in labels]).to(device)
+            pro_predict = torch.reshape(outputs, (-1, ))
+            weights = torch.tensor([0.2 if x else 0.8
+                                    for x in labels]).to(device)
             criterion.weight = weights
             loss = criterion.forward(pro_predict, labels)
             running_loss += loss.item() * images.size(0)
@@ -207,7 +209,7 @@ def test(model, criterion):
         images = images.to(device)
         outputs = model(images)
         labels = labels.type(torch.float32).to(device)
-        pro_predict = torch.reshape(outputs, (-1,))
+        pro_predict = torch.reshape(outputs, (-1, ))
         weights = torch.tensor([0.2 if x else 0.8 for x in labels]).to(device)
         criterion.weight = weights
         loss = criterion.forward(pro_predict, labels)
@@ -282,6 +284,7 @@ def execute(version,
         )
 
     if plotting:
+
         def convert_to_cpu(gpu_data):
             cpu_data = []
             for unit in gpu_data:
@@ -296,7 +299,8 @@ def execute(version,
         train_loss_cpu = convert_to_cpu(train_loss)
         val_loss_cpu = convert_to_cpu(val_loss)
         val_acc_cpu = convert_to_cpu(val_acc)
-        plot_losses_acc(version, train_acc_cpu, train_loss_cpu, val_loss_cpu, val_acc_cpu)
+        plot_losses_acc(version, train_acc_cpu, train_loss_cpu, val_loss_cpu,
+                        val_acc_cpu)
 
     if perform_testing:
         test_loss, test_acc, reports = test(trained_model, criterion)
@@ -347,11 +351,12 @@ def run():
         logger.info(f'Model {args.model}')
         current_model = NeuralNetworkB0().to(device)
 
-    # adding weights to handle class imbalance
-    weights = torch.tensor([(1597./2027.), (430./2027.)]).to(device)
+    # loss criterion, optimizer and scheduler
     loss_criterion = nn.BCEWithLogitsLoss()
-    model_optimizer = optim.ASGD(current_model.parameters(), lr=0.1)
-    scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer=model_optimizer, T_max=100, eta_min=0.0001)
+    model_optimizer = optim.SGD(current_model.parameters(), lr=1)
+    scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer=model_optimizer,
+                                                     T_max=args.epochs,
+                                                     eta_min=0.0001)
 
     execute(args.version,
             current_model,

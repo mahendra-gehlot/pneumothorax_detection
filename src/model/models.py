@@ -19,10 +19,7 @@ class NeuralNetworkB0(nn.Module):
                                                 padding=(1, 1),
                                                 bias=False)
         # adding classifier layer
-        self.efficientnet.classifier.fc = nn.Linear(1280,
-                                                    1,
-                                                    bias=True)
-
+        self.efficientnet.classifier.fc = nn.Linear(1280, 1, bias=True)
 
     def forward(self, x):
         return self.efficientnet(x)
