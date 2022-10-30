@@ -12,7 +12,6 @@ from torch import nn
 from torch import optim
 from torch.utils.data import Dataset, DataLoader
 from torchvision import datasets, transforms
-from torchvision.transforms import ToTensor
 from torchvision.io import read_image
 
 # setting up logger
@@ -76,7 +75,7 @@ Train_Dataset = PneumothoraxImgDataset('data/processed/train_data.csv',
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
-def train(model, criterion, optimizer, num_of_epochs):
+def train(model, criterion, optimizer, schedular, num_of_epochs):
     # holder of accuracy and losses over all epochs
     train_losses = []
     train_acc = []
@@ -137,6 +136,8 @@ def train(model, criterion, optimizer, num_of_epochs):
             # loss and accuracy calculations
             running_loss += loss.item() * images.size(0)
             running_accuracy += torch.sum((pro_predict > 0.0) == labels.data)
+
+        schedular.step()
 
         # epoch avg loss and accuracy
         epoch_loss = running_loss / len(train_dataset)
@@ -213,7 +214,7 @@ def test(model, criterion):
         running_loss += loss.item() * images.size(0)
         running_accuracy += torch.sum((pro_predict > 0.0) == labels.data)
 
-        predicts.extend(pro_predict.cpu())
+        predicts.extend((pro_predict > 0.0).cpu())
         labels_all.extend(labels.cpu())
 
     test_loss = running_loss / len(Test_Dataset)
@@ -262,13 +263,14 @@ def execute(version,
             model,
             criterion,
             optimizer,
+            schedular,
             epochs,
             save_model,
             plotting=True,
             perform_testing=True):
     logger.info(f'Version: {version}\n')
     trained_model, train_acc, train_loss, val_loss, val_acc = train(
-        model, criterion, optimizer, num_of_epochs=epochs)
+        model, criterion, optimizer, schedular, num_of_epochs=epochs)
 
     if save_model:
         torch.save(trained_model, f'model/infer_model.pt')
@@ -348,12 +350,14 @@ def run():
     # adding weights to handle class imbalance
     weights = torch.tensor([(1597./2027.), (430./2027.)]).to(device)
     loss_criterion = nn.BCEWithLogitsLoss()
-    model_optimizer = optim.Adam(current_model.parameters(), lr=0.0001)
+    model_optimizer = optim.ASGD(current_model.parameters(), lr=0.1)
+    scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer=model_optimizer, T_max=100, eta_min=0.0001)
 
     execute(args.version,
             current_model,
             loss_criterion,
             model_optimizer,
+            scheduler,
             args.epochs,
             save_model=args.save_model,
             plotting=args.make_plots,
