@@ -123,9 +123,9 @@ def train(model, criterion, optimizer, schedular, num_of_epochs):
 
             # setting weights for class imbalance (0.8 for minority class and 0.2 for majority class,
             # based on number of samples in dataset
-            weights = torch.tensor([0.2 if x else 0.8
-                                    for x in labels]).to(device)
-            criterion.weight = weights
+            # weights = torch.tensor([0.2 if x else 0.8
+            #                         for x in labels]).to(device)
+            # criterion.weight = weights
             loss = criterion.forward(pro_predict, labels)
 
             # backpropagation of loss
@@ -138,7 +138,7 @@ def train(model, criterion, optimizer, schedular, num_of_epochs):
             running_loss += loss.item() * images.size(0)
             running_accuracy += torch.sum((pro_predict > 0.0) == labels.data)
 
-        schedular.step()
+        # schedular.step()
 
         # epoch avg loss and accuracy
         epoch_loss = running_loss / len(train_dataset)
@@ -353,10 +353,11 @@ def run():
 
     # loss criterion, optimizer and scheduler
     loss_criterion = nn.BCEWithLogitsLoss()
-    model_optimizer = optim.NAdam(current_model.parameters(), lr=1)
-    scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer=model_optimizer,
-                                                     T_max=args.epochs,
-                                                     eta_min=0.0001)
+    model_optimizer = optim.Adam(current_model.parameters(), lr=0.002)
+    # scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer=model_optimizer,
+    #                                                  T_max=args.epochs,
+    #                                                  eta_min=0.0001)
+    scheduler = ...
 
     execute(args.version,
             current_model,

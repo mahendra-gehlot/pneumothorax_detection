@@ -1,5 +1,6 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from imblearn.over_sampling import RandomOverSampler
 
 TEST_SIZE = .10  # defining portion of data to be part of testing
 VAL_SIZE = 0.10  # defining portion of training data to be part of validation
@@ -33,7 +34,11 @@ X_train, X_val, y_train, y_val = train_test_split(files_names,
                                                   random_state=66)
 
 # training data
-train_df = pd.concat([pd.Series(X_train), pd.Series(y_train)], axis=1)
+over_sampler = RandomOverSampler(sampling_strategy='minority')
+X_train = X_train.to_numpy().reshape(-1,1)
+y_train = y_train.to_numpy()
+X_resampled, y_resampled = over_sampler.fit_resample(X_train, y_train)
+train_df = pd.concat([pd.Series(X_resampled.squeeze()), pd.Series(y_resampled)], axis=1)
 train_df.to_csv('data/processed/train_data.csv', index=False)
 
 # validation data
