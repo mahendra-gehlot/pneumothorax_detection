@@ -51,7 +51,7 @@ class NeuralNetworkB4(nn.Module):
         for param in self.efficientnet.stem.parameters():
             param.requires_grad_(False)
         for param in self.efficientnet.layers.parameters():
-            param.requires_grad_(False)
+            param.requires_grad_(True)
         for param in self.efficientnet.classifier.parameters():
             param.requires_grad_(True)
         for param in self.efficientnet.features.parameters():

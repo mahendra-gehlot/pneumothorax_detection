@@ -97,7 +97,7 @@ def train(model, criterion, optimizer, schedular, num_of_epochs):
 
         train_dataset, val_dataset = Train_Dataset, Val_Dataset
 
-        train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
+        train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
         val_loader = DataLoader(val_dataset, batch_size=16, shuffle=True)
 
         # batch wise training
@@ -192,7 +192,7 @@ def train(model, criterion, optimizer, schedular, num_of_epochs):
 def test(model, criterion):
 
     from sklearn.metrics import classification_report
-    test_loader = DataLoader(Test_Dataset, batch_size=16)
+    test_loader = DataLoader(Test_Dataset, batch_size=4)
 
     model.eval()
 
