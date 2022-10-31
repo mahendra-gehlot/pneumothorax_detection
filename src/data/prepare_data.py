@@ -34,11 +34,17 @@ X_train, X_val, y_train, y_val = train_test_split(files_names,
                                                   random_state=66)
 
 # training data
-over_sampler = RandomOverSampler(sampling_strategy='minority')
-X_train = X_train.to_numpy().reshape(-1,1)
-y_train = y_train.to_numpy()
-X_resampled, y_resampled = over_sampler.fit_resample(X_train, y_train)
-train_df = pd.concat([pd.Series(X_resampled.squeeze()), pd.Series(y_resampled)], axis=1)
+do_over_sampling = True
+
+if do_over_sampling:
+    over_sampler = RandomOverSampler(sampling_strategy='minority')
+    X_train = X_train.to_numpy().reshape(-1,1)
+    y_train = y_train.to_numpy()
+    X_resampled, y_resampled = over_sampler.fit_resample(X_train, y_train)
+    train_df = pd.concat([pd.Series(X_resampled.squeeze()), pd.Series(y_resampled)], axis=1)
+else:
+    train_df = pd.concat([pd.Series(X_train), pd.Series(y_train)], axis=1)
+
 train_df.to_csv('data/processed/train_data.csv', index=False)
 
 # validation data

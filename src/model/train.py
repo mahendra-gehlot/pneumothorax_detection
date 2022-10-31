@@ -45,6 +45,7 @@ class PneumothoraxImgDataset(Dataset):
         self.img_dir = img_dir
         self.transform = transforms.Compose([
             transforms.ToPILImage(),
+            transforms.Grayscale(3),
             transforms.Resize((dim, dim)),
             transforms.ToTensor()
         ])
@@ -96,7 +97,7 @@ def train(model, criterion, optimizer, schedular, num_of_epochs):
 
         train_dataset, val_dataset = Train_Dataset, Val_Dataset
 
-        train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+        train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
         val_loader = DataLoader(val_dataset, batch_size=16, shuffle=True)
 
         # batch wise training
@@ -355,8 +356,8 @@ def run():
         current_model = NeuralNetworkB0().to(device)
 
     # loss criterion, optimizer and scheduler
-    loss_criterion = nn.BCELoss()
-    model_optimizer = optim.Adam(current_model.parameters(), lr=0.002)
+    loss_criterion = nn.BCEWithLogitsLoss()
+    model_optimizer = optim.Adam(current_model.parameters(), lr=0.0001)
     # scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer=model_optimizer,
     #                                                  T_max=args.epochs,
     #                                                  eta_min=0.0001)

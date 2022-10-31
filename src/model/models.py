@@ -37,7 +37,7 @@ class NeuralNetworkB4(nn.Module):
             'NVIDIA/DeepLearningExamples:torchhub',
             'nvidia_efficientnet_b4',
             pretrained=True)
-        self.efficientnet.stem.conv = nn.Conv2d(1,
+        self.efficientnet.stem.conv = nn.Conv2d(3,
                                                 48,
                                                 kernel_size=(3, 3),
                                                 stride=(2, 2),
