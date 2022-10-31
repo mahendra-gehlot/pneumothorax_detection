@@ -168,10 +168,11 @@ def train(model, criterion, optimizer, schedular, num_of_epochs):
             outputs = model(images)
             labels = labels.type(torch.float32).to(device)
 
-            pro_predict = torch.reshape(outputs, (-1, ))
-            weights = torch.tensor([0.2 if x else 0.8
-                                    for x in labels]).to(device)
-            criterion.weight = weights
+            # pro_predict = torch.reshape(outputs, (-1, ))
+            # weights = torch.tensor([0.2 if x else 0.8
+            #                         for x in labels]).to(device)
+            # criterion.weight = weights
+
             loss = criterion.forward(pro_predict, labels)
             running_loss += loss.item() * images.size(0)
             running_accuracy += torch.sum((pro_predict > 0.0) == labels.data)
@@ -210,8 +211,10 @@ def test(model, criterion):
         outputs = model(images)
         labels = labels.type(torch.float32).to(device)
         pro_predict = torch.reshape(outputs, (-1, ))
-        weights = torch.tensor([0.2 if x else 0.8 for x in labels]).to(device)
-        criterion.weight = weights
+
+        # weights = torch.tensor([0.2 if x else 0.8 for x in labels]).to(device)
+        # criterion.weight = weights
+
         loss = criterion.forward(pro_predict, labels)
         running_loss += loss.item() * images.size(0)
         running_accuracy += torch.sum((pro_predict > 0.0) == labels.data)
