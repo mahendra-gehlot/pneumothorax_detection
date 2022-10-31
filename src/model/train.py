@@ -47,7 +47,8 @@ class PneumothoraxImgDataset(Dataset):
             transforms.ToPILImage(),
             transforms.Grayscale(3),
             transforms.Resize((dim, dim)),
-            transforms.ToTensor()
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])
 
     def __len__(self):
@@ -59,7 +60,6 @@ class PneumothoraxImgDataset(Dataset):
         label = self.img_labels.iloc[idx, 1]
         if self.transform:
             image = self.transform(image)
-            image = image * torch.tensor([255.0])
 
         return image, label
 
