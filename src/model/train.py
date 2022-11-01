@@ -348,8 +348,7 @@ def run():
     # loss criterion, optimizer and scheduler
     loss_criterion = nn.BCEWithLogitsLoss()
     model_optimizer = optim.SGD(current_model.parameters(), lr=0.001)
-    scheduler = optim.lr_scheduler.CosineAnnealingLR(
-        current_model.parameters(), T_max=args.epochs, eta_min=0.0001)
+    scheduler = optim.lr_scheduler.CosineAnnealingLR(model_optimizer, T_max=args.epochs, eta_min=0.0001)
 
     execute(args.version,
             current_model,
