@@ -7,8 +7,8 @@ VAL_SIZE = 0.10  # defining portion of training data to be part of validation
 
 # train_data_m contain all the images name and target_labels_ids
 raw_data = pd.read_csv('data/external/train_data_m.csv')
-image_ids = raw_data['file_name'].to_numpy()
-labels = raw_data['target'].to_numpy()
+image_ids = raw_data['path'].to_numpy()
+labels = raw_data['labels'].to_numpy()
 
 # splitting data in train validation and testing
 X_train_val, X_test, y_train_val, y_test = train_test_split(
@@ -34,7 +34,7 @@ X_train, X_val, y_train, y_val = train_test_split(files_names,
                                                   random_state=66)
 
 # training data
-do_over_sampling = True
+do_over_sampling = False
 
 if do_over_sampling:
     over_sampler = RandomOverSampler(sampling_strategy='minority')

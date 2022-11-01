@@ -97,8 +97,8 @@ def train(model, criterion, optimizer, schedular, num_of_epochs):
 
         train_dataset, val_dataset = Train_Dataset, Val_Dataset
 
-        train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
-        val_loader = DataLoader(val_dataset, batch_size=16, shuffle=True)
+        train_loader = DataLoader(train_dataset, batch_size=8, shuffle=True)
+        val_loader = DataLoader(val_dataset, batch_size=8, shuffle=True)
 
         # batch wise training
         print('-----------Training in Progress --------------')
@@ -136,7 +136,7 @@ def train(model, criterion, optimizer, schedular, num_of_epochs):
             optimizer.step()
 
             # loss and accuracy calculations
-            running_loss += loss.item() * images.size(0)
+            running_loss += images.size(0) * loss.item()
             running_accuracy += torch.sum((pro_predict > 0.0) == labels.data)
 
         # schedular.step()
@@ -170,9 +170,6 @@ def train(model, criterion, optimizer, schedular, num_of_epochs):
             labels = labels.type(torch.float32).to(device)
 
             pro_predict = torch.reshape(outputs, (-1, ))
-            # weights = torch.tensor([0.2 if x else 0.8
-            #                         for x in labels]).to(device)
-            # criterion.weight = weights
 
             loss = criterion(pro_predict, labels)
             running_loss += loss.item() * images.size(0)
@@ -212,9 +209,6 @@ def test(model, criterion):
         outputs = model(images)
         labels = labels.type(torch.float32).to(device)
         pro_predict = torch.reshape(outputs, (-1, ))
-
-        # weights = torch.tensor([0.2 if x else 0.8 for x in labels]).to(device)
-        # criterion.weight = weights
 
         loss = criterion(pro_predict, labels)
         running_loss += loss.item() * images.size(0)
@@ -358,9 +352,7 @@ def run():
     # loss criterion, optimizer and scheduler
     loss_criterion = nn.BCEWithLogitsLoss()
     model_optimizer = optim.Adam(current_model.parameters(), lr=0.0001)
-    # scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer=model_optimizer,
-    #                                                  T_max=args.epochs,
-    #                                                  eta_min=0.0001)
+
     scheduler = ...
 
     execute(args.version,
