@@ -48,7 +48,8 @@ class PneumothoraxImgDataset(Dataset):
             transforms.Grayscale(3),
             transforms.Resize((dim, dim)),
             transforms.ToTensor(),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+            transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                 std=[0.229, 0.224, 0.225])
         ])
 
     def __len__(self):
@@ -347,7 +348,8 @@ def run():
     # loss criterion, optimizer and scheduler
     loss_criterion = nn.BCEWithLogitsLoss()
     model_optimizer = optim.SGD(current_model.parameters(), lr=0.001)
-    scheduler = optim.lr_scheduler.CosineAnnealingLR(current_model.parameters(),T_max=args.epochs,eta_min=0.0001)
+    scheduler = optim.lr_scheduler.CosineAnnealingLR(
+        current_model.parameters(), T_max=args.epochs, eta_min=0.0001)
 
     execute(args.version,
             current_model,
