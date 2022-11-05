@@ -46,6 +46,9 @@ class PneumothoraxImgDataset(Dataset):
         self.transform = transforms.Compose([
             transforms.ToPILImage(),
             transforms.Grayscale(3),
+            transforms.RandomHorizontalFlip(),
+            transforms.RandomVerticalFlip(),
+            transforms.RandomRotation(degrees=15),
             transforms.Resize((dim, dim)),
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406],
@@ -347,7 +350,7 @@ def run():
 
     # loss criterion, optimizer and scheduler
     loss_criterion = nn.BCEWithLogitsLoss()
-    model_optimizer = optim.SGD(current_model.parameters(), lr=0.001)
+    model_optimizer = optim.Adam(current_model.parameters(), lr=0.001)
     scheduler = optim.lr_scheduler.CosineAnnealingLR(model_optimizer, T_max=args.epochs, eta_min=0.0001)
 
     execute(args.version,
