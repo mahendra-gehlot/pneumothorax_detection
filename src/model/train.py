@@ -87,6 +87,11 @@ def train(model, criterion, optimizer, schedular, num_of_epochs):
     val_losses = []
     val_accuracies = []
 
+    load_partially_trained = False
+
+    if load_partially_trained:
+        model.load_state_dict(torch.load('model/infer_model.pt', map_location=torch.device(device)))
+
     # training in epochs
     for _, epoch in tqdm(enumerate(range(num_of_epochs))):
 
@@ -137,6 +142,9 @@ def train(model, criterion, optimizer, schedular, num_of_epochs):
             # loss and accuracy calculations
             running_loss += images.size(0) * loss.item()
             running_accuracy += torch.sum((pro_predict > 0.0) == labels.data)
+
+            if epoch % 10 == 0:
+                torch.save(model.state_dict(), f'model/infer_model.pt')
 
         schedular.step()
 
