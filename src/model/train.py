@@ -87,7 +87,7 @@ def train(model, criterion, optimizer, schedular, num_of_epochs):
     val_losses = []
     val_accuracies = []
 
-    load_partially_trained = False
+    load_partially_trained = True
 
     if load_partially_trained:
         model.load_state_dict(torch.load('model/infer_model.pt', map_location=torch.device(device)))
@@ -143,7 +143,7 @@ def train(model, criterion, optimizer, schedular, num_of_epochs):
             running_loss += images.size(0) * loss.item()
             running_accuracy += torch.sum((pro_predict > 0.0) == labels.data)
 
-        if epoch % 10 == 0:
+        if epoch % 5 == 0:
             torch.save(model.state_dict(), f'model/infer_model.pt')
 
         schedular.step()
