@@ -1,17 +1,60 @@
 import torch
 import numpy as np
+import pandas as pd
+import os
 
 from tqdm import tqdm
 from torch.utils.data import Dataset, DataLoader
 from sklearn.metrics import classification_report
-from train import PneumothoraxImgDataset
+from torchvision.io import read_image
+from torchvision import datasets, transforms
 from models import NeuralNetworkB4
+
+
+class PneumothoraxImgDataset(Dataset):
+    """
+        Custom Dataset for Pneumothorax Detection Dataset
+
+        ...
+
+        Attributes
+        ----------
+        annotations_file : str
+            path of file dataset
+        img_dir : str
+            directory of images
+    """
+    def __init__(self, annotations_file, img_dir, dim=380):
+        self.img_labels = pd.read_csv(annotations_file)
+        self.img_dir = img_dir
+        self.transform = transforms.Compose([
+            transforms.ToPILImage(),
+            transforms.Grayscale(3),
+            transforms.Resize((dim, dim)),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                 std=[0.229, 0.224, 0.225])
+        ])
+
+    def __len__(self):
+        return len(self.img_labels)
+
+    def __getitem__(self, idx):
+        img_path = os.path.join(self.img_dir, self.img_labels.iloc[idx, 0])
+        image = read_image(img_path)
+        label = self.img_labels.iloc[idx, 1]
+        if self.transform:
+            image = self.transform(image)
+
+        return image, label
+
 
 # looking device to run training
 
 device = 'cpu'
 
 model = NeuralNetworkB4()
+
 model.load_state_dict(torch.load('model/infer_model.pt', map_location = torch.device('cpu')))
 
 Test_Dataset = PneumothoraxImgDataset('data/processed/test_data.csv',

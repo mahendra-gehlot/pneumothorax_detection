@@ -274,12 +274,12 @@ def execute(version,
             epochs,
             save_model,
             plotting=True,
-            perform_testing=True):
+            perform_testing=False):
     logger.info(f'Version: {version}\n')
     trained_model, train_acc, train_loss, val_loss, val_acc = train(
         model, criterion, optimizer, schedular, num_of_epochs=epochs)
 
-    if save_model:
+    if save_model == 'yes':
         torch.save(trained_model.state_dict(), f'model/infer_model.pt')
 
     logger.info('Epoch   Training Accuracy  Validation Accuracy')
@@ -288,7 +288,7 @@ def execute(version,
             f'{idx + 1}      {train_acc[idx]:.5f}              {val_acc[idx]:.5f}'
         )
 
-    if plotting:
+    if plotting == 'yes':
 
         def convert_to_cpu(gpu_data):
             cpu_data = []
@@ -335,13 +335,13 @@ def run():
                         help='Number of epochs for training')
 
     parser.add_argument('save_model',
-                        type=bool,
-                        default=False,
+                        type=str,
+                        default='yes',
                         help='saves trained model')
 
     parser.add_argument('make_plots',
-                        type=bool,
-                        default=False,
+                        type='str',
+                        default='yes',
                         help='plots of losses and accuracy are stored')
 
     args = parser.parse_args()
@@ -369,7 +369,7 @@ def run():
             args.epochs,
             save_model=args.save_model,
             plotting=args.make_plots,
-            perform_testing=True)
+            perform_testing=False)
 
     return None
 
