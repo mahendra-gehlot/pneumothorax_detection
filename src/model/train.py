@@ -335,12 +335,10 @@ def run():
                         help='Number of epochs for training')
 
     parser.add_argument('save_model',
-                        type=str,
                         default='yes',
                         help='saves trained model')
 
     parser.add_argument('make_plots',
-                        type='str',
                         default='yes',
                         help='plots of losses and accuracy are stored')
 
