@@ -51,11 +51,11 @@ class PneumothoraxImgDataset(Dataset):
 
 # looking device to run training
 
-device = 'cpu'
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
-model = NeuralNetworkB4()
+model = NeuralNetworkB4().to(device)
 
-model.load_state_dict(torch.load('model/infer_model.pt', map_location = torch.device('cpu')))
+model.load_state_dict(torch.load('model/infer_model.pt', map_location = torch.device(device)))
 
 Test_Dataset = PneumothoraxImgDataset('data/processed/test_data.csv',
                                       'data/external/small_train_data_set')
@@ -75,7 +75,7 @@ for idx, data in tqdm(enumerate(test_loader),
                       position=0,
                       leave=True):
     images, labels = data
-    images = images.type(torch.float32).to(device)
+    images = images.to(device)
 
     outputs = model(images)
     labels = labels.type(torch.float32).to(device)
