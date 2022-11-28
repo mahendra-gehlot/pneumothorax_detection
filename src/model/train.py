@@ -356,8 +356,8 @@ def run():
 
     # loss criterion, optimizer and scheduler
     loss_criterion = nn.BCEWithLogitsLoss()
-    model_optimizer = optim.Adam(current_model.parameters(), lr=0.001)
-    scheduler = optim.lr_scheduler.CosineAnnealingLR(model_optimizer, T_max=args.epochs, eta_min=0.0001)
+    model_optimizer = optim.Adam(current_model.parameters(), lr=0.0001)
+    scheduler = optim.lr_scheduler.CosineAnnealingLR(model_optimizer, T_max=args.epochs, eta_min=0.00005)
 
     execute(args.version,
             current_model,
