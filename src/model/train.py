@@ -143,7 +143,7 @@ def train(model, criterion, optimizer, schedular, num_of_epochs):
             running_loss += images.size(0) * loss.item()
             running_accuracy += torch.sum((pro_predict > 0.0) == labels.data)
 
-        if epoch % 5 == 0:
+        if epoch % 2 == 0:
             torch.save(model.state_dict(), f'model/infer_model.pt')
 
         schedular.step()
@@ -273,7 +273,7 @@ def execute(version,
             schedular,
             epochs,
             save_model,
-            plotting=True,
+            plotting,
             perform_testing=False):
     logger.info(f'Version: {version}\n')
     trained_model, train_acc, train_loss, val_loss, val_acc = train(
