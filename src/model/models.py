@@ -59,3 +59,35 @@ class NeuralNetworkB4(nn.Module):
 
     def forward(self, x):
         return self.efficientnet(x)
+
+
+class NeuralNetworkB4SE(nn.Module):
+    def __init__(self):
+        super(NeuralNetworkB4SE, self).__init__()
+        # downloading pretrained efficient net model
+        self.efficientnet = torch.hub.load(
+            'NVIDIA/DeepLearningExamples:torchhub',
+            'nvidia_efficientnet_widese_b4',
+            pretrained=True)
+        self.efficientnet.stem.conv = nn.Conv2d(3,
+                                                48,
+                                                kernel_size=(3, 3),
+                                                stride=(2, 2),
+                                                padding=(1, 1),
+                                                bias=False)
+        # adding classifier layer
+        self.efficientnet.classifier.fc = nn.Linear(1792, 1, bias=True)
+
+        # settings model for training parameters
+        # efficient_net has four block {stem layers features classifier}
+        for param in self.efficientnet.stem.parameters():
+            param.requires_grad_(False)
+        for param in self.efficientnet.layers.parameters():
+            param.requires_grad_(True)
+        for param in self.efficientnet.classifier.parameters():
+            param.requires_grad_(True)
+        for param in self.efficientnet.features.parameters():
+            param.requires_grad_(True)
+
+    def forward(self, x):
+        return self.efficientnet(x)

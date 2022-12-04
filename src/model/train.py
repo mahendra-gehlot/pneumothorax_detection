@@ -106,7 +106,7 @@ def train(model, criterion, optimizer, schedular, num_of_epochs):
 
         train_dataset, val_dataset = Train_Dataset, Val_Dataset
 
-        train_loader = DataLoader(train_dataset, batch_size=8, shuffle=True)
+        train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
         val_loader = DataLoader(val_dataset, batch_size=8, shuffle=True)
 
         # batch wise training
@@ -356,8 +356,14 @@ def run():
 
     # loss criterion, optimizer and scheduler
     loss_criterion = nn.BCEWithLogitsLoss()
-    model_optimizer = optim.Adam(current_model.parameters(), lr=0.0001)
-    scheduler = optim.lr_scheduler.CosineAnnealingLR(model_optimizer, T_max=args.epochs, eta_min=0.00005)
+    model_optimizer = optim.RMSprop(current_model.parameters(),
+                                    lr=4.09e-06,
+                                    alpha=0.853,
+                                    eps=0.00422,
+                                    weight_decay=9.714e-04,
+                                    momentum=0.9)
+    # scheduler = optim.lr_scheduler.CosineAnnealingLR(model_optimizer, T_max=args.epochs, eta_min=0.00005)
+    scheduler = optim.lr_scheduler.LinearLR(model_optimizer)
 
     execute(args.version,
             current_model,
