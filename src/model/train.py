@@ -106,7 +106,7 @@ def train(model, criterion, optimizer, schedular, num_of_epochs):
 
         train_dataset, val_dataset = Train_Dataset, Val_Dataset
 
-        train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+        train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
         val_loader = DataLoader(val_dataset, batch_size=8, shuffle=True)
 
         # batch wise training
